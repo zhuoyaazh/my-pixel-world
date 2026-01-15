@@ -3,6 +3,21 @@
 import { useState, useEffect } from 'react';
 import RetroCard from './RetroCard';
 
+type WeatherLabels = {
+  heading: string;
+  auto: string;
+  placeholder: string;
+  loading: string;
+  humidity: string;
+  wind: string;
+  errorLocation: string;
+  errorFetch: string;
+};
+
+type WeatherWidgetProps = {
+  labels?: WeatherLabels;
+};
+
 interface WeatherData {
   name: string;
   main: {
@@ -19,7 +34,17 @@ interface WeatherData {
   };
 }
 
-export default function WeatherWidget() {
+export default function WeatherWidget({ labels }: WeatherWidgetProps) {
+  const ui: WeatherLabels = labels ?? {
+    heading: '🌤️ WEATHER',
+    auto: 'AUTO',
+    placeholder: 'City...',
+    loading: 'Loading weather...',
+    humidity: 'Humidity',
+    wind: 'Wind',
+    errorLocation: 'Location access denied',
+    errorFetch: 'Failed to fetch weather',
+  };
   const [weather, setWeather] = useState<WeatherData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -43,13 +68,14 @@ export default function WeatherWidget() {
       );
 
       if (!response.ok) {
-        throw new Error('Failed to fetch weather');
+        throw new Error(ui.errorFetch);
       }
 
       const data = await response.json();
       setWeather(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Location access denied');
+      const locationError = err instanceof Error ? err.message : null;
+      setError(locationError || ui.errorLocation);
       console.error('Geolocation error:', err);
     } finally {
       setLoading(false);
@@ -68,14 +94,15 @@ export default function WeatherWidget() {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to fetch weather');
+        throw new Error(errorData.error || ui.errorFetch);
       }
 
       const data = await response.json();
       setWeather(data);
       setSearchInput('');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch weather');
+      const fetchError = err instanceof Error ? err.message : null;
+      setError(fetchError || ui.errorFetch);
       console.error('Weather fetch error:', err);
     } finally {
       setLoading(false);
@@ -95,7 +122,7 @@ export default function WeatherWidget() {
   return (
     <RetroCard className="flex flex-col gap-3 sm:gap-4">
       <h2 className="text-[10px] sm:text-xs font-bold text-pastel-purple">
-        🌤️ WEATHER
+        {ui.heading}
       </h2>
 
       {/* Buttons */}
@@ -105,14 +132,14 @@ export default function WeatherWidget() {
           disabled={loading}
           className="text-[8px] sm:text-[9px] px-2 py-1 sm:px-3 sm:py-1.5 bg-pastel-blue text-black border-2 border-black font-bold hover:bg-opacity-80 disabled:opacity-50 transition-all"
         >
-          {loading ? '...' : 'AUTO'}
+          {loading ? '...' : ui.auto}
         </button>
         <form onSubmit={handleSearch} className="flex gap-2 flex-1">
           <input
             type="text"
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
-            placeholder="City..."
+            placeholder={ui.placeholder}
             className="text-[8px] sm:text-[9px] px-2 py-1 sm:px-3 sm:py-1.5 border-2 border-black flex-1 font-bold placeholder-gray-500"
           />
           <button
@@ -145,15 +172,15 @@ export default function WeatherWidget() {
             <div className="text-pastel-blue">{weather.weather[0].description}</div>
           </div>
           <div className="text-[8px] sm:text-[9px] text-gray-600 font-bold space-y-1">
-            <div>💧 Humidity: {weather.main.humidity}%</div>
-            <div>💨 Wind: {weather.wind.speed.toFixed(1)} km/h</div>
+            <div>💧 {ui.humidity}: {weather.main.humidity}%</div>
+            <div>💨 {ui.wind}: {weather.wind.speed.toFixed(1)} km/h</div>
           </div>
         </div>
       )}
 
       {loading && !weather && (
         <div className="text-[8px] sm:text-[9px] text-gray-600 font-bold">
-          Loading weather...
+          {ui.loading}
         </div>
       )}
     </RetroCard>

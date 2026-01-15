@@ -21,7 +21,7 @@ export default function RetroCard({
   return (
     <div className={`${baseStyles} ${clickableStyles} ${className}`}>
       {title && (
-        <h3 className="font-press text-[10px] sm:text-xs mb-3 sm:mb-4 text-retro-border uppercase tracking-wide break-words">
+        <h3 className="font-press text-[10px] sm:text-xs mb-3 sm:mb-4 text-pastel-yellow uppercase tracking-wide break-words drop-shadow-lg">
           {title}
         </h3>
       )}
