@@ -100,7 +100,7 @@ export default function MessagesPage() {
           <h1 className="text-xl sm:text-3xl font-bold text-pastel-yellow" style={{ fontFamily: 'var(--font-press)' }}>
             💬 GUESTBOOK
           </h1>
-          <p className="text-[10px] sm:text-xs text-pastel-purple font-bold">
+          <p className="text-[10px] sm:text-xs text-gray-600 font-bold">
             Send an anonymous message!
           </p>
         </div>
