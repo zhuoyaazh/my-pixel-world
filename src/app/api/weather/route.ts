@@ -1,34 +1,27 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+const API_KEY = process.env.OPENWEATHER_API_KEY;
+
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const city = searchParams.get('city');
   const lat = searchParams.get('lat');
   const lon = searchParams.get('lon');
 
+  if (!API_KEY) {
+    return NextResponse.json(
+      { error: 'API key not configured' },
+      { status: 500 }
+    );
+  }
+
   try {
-    let latitude: number;
-    let longitude: number;
+    let url: string;
 
-    // If city provided, geocode it first
     if (city) {
-      const geoResponse = await fetch(
-        `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1&language=en`
-      );
-      const geoData = await geoResponse.json();
-
-      if (!geoData.results || geoData.results.length === 0) {
-        return NextResponse.json(
-          { error: 'City not found' },
-          { status: 404 }
-        );
-      }
-
-      latitude = geoData.results[0].latitude;
-      longitude = geoData.results[0].longitude;
+      url = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&appid=${API_KEY}&units=metric`;
     } else if (lat && lon) {
-      latitude = parseFloat(lat);
-      longitude = parseFloat(lon);
+      url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`;
     } else {
       return NextResponse.json(
         { error: 'Missing city or coordinates' },
@@ -36,51 +29,17 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Fetch weather using coordinates
-    const weatherResponse = await fetch(
-      `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,weather_code,relative_humidity_2m,wind_speed_10m&timezone=auto`
-    );
-    const weatherData = await weatherResponse.json();
+    const response = await fetch(url);
+    const data = await response.json();
 
-    if (!weatherData.current) {
-      throw new Error('Failed to fetch weather data');
-    }
-
-    // Get city name from reverse geocode if using coordinates
-    let cityName = city || 'Unknown Location';
-    if (!city) {
-      const reverseGeoResponse = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
+    if (!response.ok) {
+      return NextResponse.json(
+        { error: data.message || 'Failed to fetch weather' },
+        { status: response.status }
       );
-      const reverseGeoData = await reverseGeoResponse.json();
-      cityName = reverseGeoData.address?.city || 
-                reverseGeoData.address?.town || 
-                reverseGeoData.address?.county ||
-                'Unknown Location';
     }
 
-    // Map weather codes to descriptions and icons
-    const weatherCode = weatherData.current.weather_code;
-    const isDay = true; // simplified, could be enhanced with time data
-    const weatherInfo = getWeatherInfo(weatherCode, isDay);
-
-    return NextResponse.json({
-      name: cityName,
-      latitude,
-      longitude,
-      main: {
-        temp: weatherData.current.temperature_2m,
-        humidity: weatherData.current.relative_humidity_2m,
-      },
-      weather: [{
-        main: weatherInfo.condition,
-        description: weatherInfo.description,
-        icon: weatherInfo.icon,
-      }],
-      wind: {
-        speed: weatherData.current.wind_speed_10m,
-      }
-    });
+    return NextResponse.json(data);
   } catch (error) {
     console.error('Weather API error:', error);
     return NextResponse.json(
@@ -90,8 +49,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// WMO Weather interpretation codes
-// https://www.open-meteo.com/en/docs
+// Helper function for weather icon mapping (not needed for OpenWeatherMap)
 function getWeatherInfo(code: number, isDay: boolean) {
   const weatherMap: Record<number, { condition: string; description: string; icon: string }> = {
     0: { condition: 'Clear', description: 'Clear sky', icon: '☀️' },

@@ -22,7 +22,9 @@ interface WeatherData {
   name: string;
   main: {
     temp: number;
+    feels_like: number;
     humidity: number;
+    pressure: number;
   };
   weather: Array<{
     main: string;
@@ -31,6 +33,10 @@ interface WeatherData {
   }>;
   wind: {
     speed: number;
+  };
+  visibility?: number;
+  clouds?: {
+    all: number;
   };
 }
 
@@ -160,20 +166,24 @@ export default function WeatherWidget({ labels }: WeatherWidgetProps) {
       )}
 
       {weather && !error && (
-        <div className="space-y-2">
+        <div className="space-y-2 sm:space-y-3">
           <div className="text-[9px] sm:text-xs font-bold text-pastel-purple">
             {weather.name}
           </div>
           <div className="text-lg sm:text-2xl">
-            {weather.weather[0].icon}
+            {getWeatherEmoji(weather.weather[0].icon)}
           </div>
           <div className="text-[9px] sm:text-xs font-bold">
-            <div>{weather.main.temp.toFixed(1)}°C</div>
-            <div className="text-pastel-blue">{weather.weather[0].description}</div>
+            <div className="text-lg sm:text-xl">{weather.main.temp.toFixed(1)}°C</div>
+            <div className="text-pastel-blue capitalize">{weather.weather[0].description}</div>
+            <div className="text-gray-500 text-[8px] sm:text-[9px]">Feels like {weather.main.feels_like.toFixed(1)}°C</div>
           </div>
-          <div className="text-[8px] sm:text-[9px] text-gray-600 font-bold space-y-1">
+          <div className="grid grid-cols-2 gap-2 text-[8px] sm:text-[9px] text-gray-600 font-bold">
             <div>💧 {ui.humidity}: {weather.main.humidity}%</div>
-            <div>💨 {ui.wind}: {weather.wind.speed.toFixed(1)} km/h</div>
+            <div>💨 {ui.wind}: {weather.wind.speed.toFixed(1)} m/s</div>
+            <div>🎈 Pressure: {weather.main.pressure} hPa</div>
+            {weather.clouds && <div>☁️ Clouds: {weather.clouds.all}%</div>}
+            {weather.visibility && <div className="col-span-2">👁️ Visibility: {(weather.visibility / 1000).toFixed(1)} km</div>}
           </div>
         </div>
       )}
@@ -185,4 +195,20 @@ export default function WeatherWidget({ labels }: WeatherWidgetProps) {
       )}
     </RetroCard>
   );
+}
+
+// Helper to map OpenWeatherMap icon codes to emojis
+function getWeatherEmoji(iconCode: string): string {
+  const iconMap: Record<string, string> = {
+    '01d': '☀️', '01n': '🌙',
+    '02d': '⛅', '02n': '☁️',
+    '03d': '☁️', '03n': '☁️',
+    '04d': '☁️', '04n': '☁️',
+    '09d': '🌧️', '09n': '🌧️',
+    '10d': '🌦️', '10n': '🌧️',
+    '11d': '⛈️', '11n': '⛈️',
+    '13d': '❄️', '13n': '❄️',
+    '50d': '🌫️', '50n': '🌫️',
+  };
+  return iconMap[iconCode] || iconCode;
 }
