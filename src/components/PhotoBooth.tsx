@@ -117,26 +117,51 @@ export default function PhotoBooth() {
       setCountdown((prev) => {
         if (prev <= 1) {
           clearInterval(countdownInterval);
-          // Take photo
+          // Take photo with proper 3:4 aspect ratio crop
           if (videoRef.current && canvasRef.current) {
             const context = canvasRef.current.getContext('2d');
             if (context) {
-              canvasRef.current.width = videoRef.current.videoWidth;
-              canvasRef.current.height = videoRef.current.videoHeight;
+              const videoWidth = videoRef.current.videoWidth;
+              const videoHeight = videoRef.current.videoHeight;
+              
+              // Calculate crop to maintain 3:4 aspect ratio (portrait)
+              const targetAspect = 3 / 4; // width/height
+              let cropWidth = videoWidth;
+              let cropHeight = videoWidth / targetAspect;
+              
+              if (cropHeight > videoHeight) {
+                cropHeight = videoHeight;
+                cropWidth = videoHeight * targetAspect;
+              }
+              
+              const offsetX = (videoWidth - cropWidth) / 2;
+              const offsetY = (videoHeight - cropHeight) / 2;
+              
+              canvasRef.current.width = cropWidth;
+              canvasRef.current.height = cropHeight;
+              
               // Flip horizontally (remove mirror)
               context.scale(-1, 1);
-              context.drawImage(videoRef.current, -canvasRef.current.width, 0);
+              context.drawImage(
+                videoRef.current,
+                offsetX,
+                offsetY,
+                cropWidth,
+                cropHeight,
+                -cropWidth,
+                0,
+                cropWidth,
+                cropHeight
+              );
               context.scale(-1, 1);
               const photo = canvasRef.current.toDataURL('image/png');
 
               if (retakingIdx !== undefined) {
-                // Replace existing photo
                 const newPhotos = [...photos];
                 newPhotos[retakingIdx] = photo;
                 setPhotos(newPhotos);
                 setRetakingIndex(null);
               } else {
-                // Add new photo
                 setPhotos((prev) => [...prev, photo]);
               }
             }
@@ -161,9 +186,9 @@ export default function PhotoBooth() {
     const ctx = downloadCanvas.getContext('2d');
     if (!ctx) return;
 
-    const photoWidth = 300;
-    const photoHeight = 400;
-    const stripPadding = 20;
+    const photoWidth = 240;
+    const photoHeight = 320; // 3:4 aspect ratio
+    const stripPadding = 30;
     const rows = gridLayout;
 
     downloadCanvas.width = photoWidth + stripPadding * 2;
@@ -191,9 +216,10 @@ export default function PhotoBooth() {
     photosToUse.forEach((photoData, index) => {
       img.onload = () => {
         const yPos = stripPadding + index * (photoHeight + stripPadding);
-        // Center photo horizontally
-        const xPos = stripPadding + (photoWidth - img.width) / 2;
-        ctx.drawImage(img, xPos, yPos, photoWidth - stripPadding * 2, photoHeight - stripPadding);
+        const xPos = stripPadding;
+        
+        // Draw photo maintaining aspect ratio
+        ctx.drawImage(img, xPos, yPos, photoWidth, photoHeight);
 
         loadedCount++;
         if (loadedCount === photosToUse.length) {
