@@ -47,6 +47,9 @@ export const ORGANIZATIONS: OrgEntry[] = [
     year: "2025",
     positions: [
       { role: "Staff Divisi Desain Pendamping Sebaya", org: "ITB 2025" },
+      { role: "Tim IT", org: "Phiwiki ITB" },
+      { role: "Intern Biro Creative and Branding", org: "Badan Pengurus HIMAFI ITB" },
+      { role: "Intern Komisi Publikasi dan Dokumentasi", org: "DPA HIMAFI ITB" },
     ],
   },
 ];
@@ -96,18 +99,6 @@ export const COMMITTEES: CommitteeEntry[] = [
       { 
         role: "Kepala Divisi Grafis", 
         event: "Aksi Angkatan Dayanatha Mandala"
-      },
-      { 
-        role: "Tim IT", 
-        event: "Phiwiki ITB"
-      },
-      { 
-        role: "Intern Biro Creative and Branding", 
-        event: "Badan Pengurus HIMAFI ITB"
-      },
-      { 
-        role: "Intern Komisi Publikasi dan Dokumentasi", 
-        event: "DPA HIMAFI ITB"
       },
       { 
         role: "Staff LO Wisuda Oktober", 

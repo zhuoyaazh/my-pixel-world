@@ -318,6 +318,25 @@ export default function Home() {
             </div>
           </RetroCard>
 
+          {/* PhotoBooth */}
+          <Link href="/photobooth">
+            <RetroCard 
+              title="PHOTOBOOTH"
+              clickable
+              className="bg-gradient-to-br from-pastel-yellow to-pastel-mint border-4 border-[#d6336c] hover:border-pastel-blue hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+            >
+              <div className="text-center space-y-2">
+                <p className="text-4xl sm:text-5xl">📷✨</p>
+                <p className="text-[9px] sm:text-xs font-bold text-pastel-purple">
+                  Capture cute moments!
+                </p>
+                <p className="text-[8px] sm:text-[9px] text-gray-600">
+                  Create your pixel-perfect photobooth strip
+                </p>
+              </div>
+            </RetroCard>
+          </Link>
+
           {/* Guestbook */}
           {showGuestbook && (
             <Link href="/messages">
@@ -388,7 +407,7 @@ export default function Home() {
               </button>
               <button
                 onClick={() => setActiveTab('committee')}
-                className={`px-4 py-2 font-press text-xs transition-colors border-b-2 ${
+                className={`px-4 py-2 font-press text-[10px] sm:text-xs transition-colors border-b-2 break-words ${
                   activeTab === 'committee'
                     ? 'border-b-pastel-yellow text-pastel-yellow'
                     : 'border-b-transparent text-retro-text/50 hover:text-retro-text'
