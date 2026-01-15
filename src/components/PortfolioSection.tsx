@@ -30,7 +30,7 @@ export default function PortfolioSection({ data, isCommittee = false }: Portfoli
 
               {/* Year Badge */}
               <div className="mb-4">
-                <span className="inline-block bg-pastel-yellow border-2 border-retro-border px-3 py-1 font-press text-xs rounded">
+                <span className="inline-block bg-pastel-yellow border-2 border-retro-border px-2 sm:px-3 py-1 font-press text-[10px] sm:text-xs rounded">
                   {entry.year}
                 </span>
               </div>
@@ -40,17 +40,17 @@ export default function PortfolioSection({ data, isCommittee = false }: Portfoli
                 {items.map((item, itemIdx) => (
                   <div
                     key={itemIdx}
-                    className="bg-white border-2 border-retro-border p-4 shadow-retro hover:shadow-retro-hover transition-all"
+                    className="bg-white border-2 border-retro-border p-3 sm:p-4 shadow-retro hover:shadow-retro-hover transition-all"
                   >
-                    <p className="font-press text-sm text-retro-border mb-1 uppercase">
+                    <p className="font-press text-[10px] sm:text-xs md:text-sm text-retro-border mb-1 uppercase leading-relaxed break-words">
                       {item.role}
                     </p>
-                    <p className="text-xs text-retro-text flex items-center gap-2 mb-2">
-                      <span>{isCommittee ? '🎯' : '🏢'}</span>
-                      <strong>{isCommittee ? (item as any).event : (item as any).org}</strong>
+                    <p className="text-[10px] sm:text-xs text-retro-text flex items-start gap-2 mb-2 flex-wrap">
+                      <span className="flex-shrink-0">{isCommittee ? '🎯' : '🏢'}</span>
+                      <strong className="break-words flex-1">{isCommittee ? (item as any).event : (item as any).org}</strong>
                     </p>
                     {item.description && (
-                      <p className="text-xs text-retro-text/60 italic pl-5 border-l-2 border-pastel-purple/30">
+                      <p className="text-[10px] sm:text-xs text-retro-text/60 italic pl-3 sm:pl-5 border-l-2 border-pastel-purple/30 break-words leading-relaxed">
                         {item.description}
                       </p>
                     )}

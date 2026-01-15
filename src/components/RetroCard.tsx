@@ -13,7 +13,7 @@ export default function RetroCard({
   clickable = false,
   title 
 }: RetroCardProps) {
-  const baseStyles = "bg-white border-4 border-retro-border p-6 shadow-retro transition-all";
+  const baseStyles = "bg-white border-4 border-retro-border p-4 sm:p-6 shadow-retro transition-all";
   const clickableStyles = clickable 
     ? "cursor-pointer hover:shadow-retro-hover active:translate-y-1 active:shadow-none" 
     : "";
@@ -21,7 +21,7 @@ export default function RetroCard({
   return (
     <div className={`${baseStyles} ${clickableStyles} ${className}`}>
       {title && (
-        <h3 className="font-press text-xs mb-4 text-retro-border uppercase tracking-wide">
+        <h3 className="font-press text-[10px] sm:text-xs mb-3 sm:mb-4 text-retro-border uppercase tracking-wide break-words">
           {title}
         </h3>
       )}

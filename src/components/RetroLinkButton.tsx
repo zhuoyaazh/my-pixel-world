@@ -21,7 +21,7 @@ export default function RetroLinkButton({
   return (
     <a
       href={href}
-      className={`block p-3 border-2 border-retro-border text-center font-press text-xs transition-colors ${className}`}
+      className={`block p-2 sm:p-3 border-2 border-retro-border text-center font-press text-[10px] sm:text-xs transition-colors break-words ${className}`}
       {...(isExternal
         ? { target: "_blank", rel: "noopener noreferrer" }
         : {})}

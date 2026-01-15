@@ -5,7 +5,8 @@ import PixelCharacter from '@/components/PixelCharacter';
 import SpotifyEmbed from '@/components/SpotifyEmbed';
 import RetroLinkButton from '@/components/RetroLinkButton';
 import PortfolioSection from '@/components/PortfolioSection';
-import { INSTAGRAM_URL, PORTFOLIO_URL, EMAIL_URL, EMAIL_URL_2 } from '@/config/links';
+import WeatherWidget from '@/components/WeatherWidget';
+import { INSTAGRAM_URL, PORTFOLIO_URL, GITHUB_URL, EMAIL_URL, EMAIL_URL_2 } from '@/config/links';
 import { ORGANIZATIONS, COMMITTEES } from '@/config/portfolio';
 import { useState } from 'react';
 
@@ -22,10 +23,10 @@ export default function Home() {
       <main className="relative z-10 container mx-auto px-6 py-12 min-h-screen">
         {/* Header */}
         <header className="text-center mb-12">
-          <h1 className="font-press text-3xl md:text-5xl text-retro-text mb-4 drop-shadow-lg">
+          <h1 className="font-press text-2xl sm:text-3xl md:text-5xl text-retro-text mb-4 drop-shadow-lg leading-relaxed">
             ZHUOYAAZH
           </h1>
-          <p className="font-neue text-xl text-retro-text">
+          <p className="font-neue text-base sm:text-xl text-retro-text px-4">
             Welcome to My Cozy Digital Space ✨
           </p>
         </header>
@@ -36,23 +37,23 @@ export default function Home() {
           {/* Profile Card */}
           <RetroCard title="About Me" className="lg:col-span-2">
             <div className="space-y-4">
-              <p className="text-lg leading-relaxed text-retro-text">
-                <span className="font-press text-sm">嗨! 我是 zhuoyaazh</span> 👋
+              <p className="text-base sm:text-lg leading-relaxed text-retro-text">
+                <span className="font-press text-xs sm:text-sm break-words">嗨! 我是 zhuoyaazh</span> 👋
               </p>
-              <p className="text-sm leading-relaxed text-retro-text">
+              <p className="text-xs sm:text-sm leading-relaxed text-retro-text">
                 ✨ Physics Student at ITB | Psychology & Mental Health Enthusiast | Exploring Digital Art, IT, and Chinese Language & Culture | Passionate about Human Connection & Mental Wellbeing
               </p>
               <div className="flex flex-wrap gap-2">
-                <span className="px-3 py-1 bg-pastel-mint border-2 border-retro-border text-xs font-press">
+                <span className="px-2 sm:px-3 py-1 bg-pastel-mint border-2 border-retro-border text-[10px] sm:text-xs font-press">
                   PHYSICS
                 </span>
-                <span className="px-3 py-1 bg-pastel-purple border-2 border-retro-border text-xs font-press">
+                <span className="px-2 sm:px-3 py-1 bg-pastel-purple border-2 border-retro-border text-[10px] sm:text-xs font-press">
                   PSYCHOLOGY
                 </span>
-                <span className="px-3 py-1 bg-pastel-yellow border-2 border-retro-border text-xs font-press">
+                <span className="px-2 sm:px-3 py-1 bg-pastel-yellow border-2 border-retro-border text-[10px] sm:text-xs font-press">
                   DIGITAL ART
                 </span>
-                <span className="px-3 py-1 bg-pastel-blue border-2 border-retro-border text-xs font-press">
+                <span className="px-2 sm:px-3 py-1 bg-pastel-blue border-2 border-retro-border text-[10px] sm:text-xs font-press">
                   CHINESE 中文
                 </span>
               </div>
@@ -71,7 +72,10 @@ export default function Home() {
               <RetroLinkButton href={PORTFOLIO_URL} ariaLabel="Open LinkedIn" className="bg-pastel-yellow hover:bg-pastel-purple">
                 💼 LINKEDIN
               </RetroLinkButton>
-              <RetroLinkButton href={INSTAGRAM_URL} ariaLabel="Open Instagram" className="bg-pastel-mint hover:bg-pastel-purple">
+              <RetroLinkButton href={GITHUB_URL} ariaLabel="Open GitHub" className="bg-pastel-mint hover:bg-pastel-purple">
+                💻 GITHUB
+              </RetroLinkButton>
+              <RetroLinkButton href={INSTAGRAM_URL} ariaLabel="Open Instagram" className="bg-pastel-purple hover:bg-pastel-blue">
                 🎨 INSTAGRAM
               </RetroLinkButton>
             </div>
@@ -88,13 +92,9 @@ export default function Home() {
             />
           </RetroCard>
 
-          {/* Placeholder for Weather Widget */}
+          {/* Weather Widget */}
           <RetroCard title="Weather">
-            <div className="text-center space-y-3">
-              <div className="text-5xl">☀️</div>
-              <p className="font-press text-sm">28°C</p>
-              <p className="text-sm text-retro-text/70">Bandung, ID</p>
-            </div>
+            <WeatherWidget />
           </RetroCard>
 
           {/* Portfolio Section */}
