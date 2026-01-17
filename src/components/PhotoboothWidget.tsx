@@ -344,7 +344,7 @@ export default function PhotoboothWidget() {
 
 
   // --- DOWNLOAD FINAL STRIP WITH DECORATIONS & TEXT ---
-  const downloadStrip = () => {
+  const downloadStrip = async () => {
     if (!downloadCanvasRef.current) return;
     const canvas = downloadCanvasRef.current;
     const ctx = canvas.getContext('2d', { willReadFrequently: true });
@@ -359,33 +359,49 @@ export default function PhotoboothWidget() {
     ctx.fillStyle = frameColors[frameColor];
     ctx.fillRect(0, 0, totalW, totalH);
 
-    // 2. Draw photos
-    capturedImages.slice(0, photosRequired).forEach((photoData, idx) => {
+    // 2. Draw photos - wait for all to load first
+    const photoPromises = capturedImages.slice(0, photosRequired).map((photoData, idx) => {
+      return new Promise<void>((resolve) => {
         const img = new Image();
         img.src = photoData;
         
         img.onload = () => {
-            const col = idx % config.cols;
-            const row = Math.floor(idx / config.cols);
-            
-            const x = border + (col * (singleW + gap));
-            const y = border + (row * (singleH + gap));
-            
-            ctx.drawImage(img, x, y, singleW, singleH);
+          const col = idx % config.cols;
+          const row = Math.floor(idx / config.cols);
+          
+          const x = border + (col * (singleW + gap));
+          const y = border + (row * (singleH + gap));
+          
+          ctx.drawImage(img, x, y, singleW, singleH);
+          resolve();
         };
+        
+        img.onerror = () => resolve(); // Continue even if one fails
+      });
     });
 
-    // 3. Draw stickers
+    // Wait for all photos to finish loading
+    await Promise.all(photoPromises);
+
+    // 3. Draw stickers (AFTER photos)
+    // Scale sticker coordinates from preview (260px) to download canvas
+    const previewWidth = 260;
+    const scale = totalW / previewWidth;
+    
     ctx.imageSmoothingEnabled = false;
     stickers.forEach((sticker) => {
-      const cellSize = sticker.size / sticker.gridWidth;
+      const scaledX = sticker.x * scale;
+      const scaledY = sticker.y * scale;
+      const scaledSize = sticker.size * scale;
+      const cellSize = scaledSize / sticker.gridWidth;
+      
       sticker.grid.forEach((row, rowIdx) => {
         row.forEach((color, colIdx) => {
           if (color !== '#FFFFFF') {
             ctx.fillStyle = color;
             ctx.fillRect(
-              sticker.x + (colIdx * cellSize),
-              sticker.y + (rowIdx * cellSize),
+              scaledX + (colIdx * cellSize),
+              scaledY + (rowIdx * cellSize),
               cellSize,
               cellSize
             );
@@ -409,12 +425,10 @@ export default function PhotoboothWidget() {
     ctx.fillText('© zhuoyaazh', totalW - 80, totalH - 10);
 
     // 6. Download
-    setTimeout(() => {
-        const link = document.createElement('a');
-        link.download = `photobooth-${Date.now()}.png`;
-        link.href = canvas.toDataURL('image/png');
-        link.click();
-    }, 100);
+    const link = document.createElement('a');
+    link.download = `photobooth-${Date.now()}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
   };
 
   // --- PIXEL ART CANVAS FUNCTIONS ---
