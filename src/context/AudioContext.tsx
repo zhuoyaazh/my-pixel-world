@@ -12,7 +12,7 @@ interface AudioContextType {
   setIsAudioPlaying: (playing: boolean) => void;
   currentTrack: number;
   setCurrentTrack: (track: number) => void;
-  audioRef: React.RefObject<HTMLAudioElement>;
+  audioRef: React.RefObject<HTMLAudioElement | null>;
 }
 
 const AudioContext = createContext<AudioContextType | undefined>(undefined);
@@ -27,7 +27,10 @@ export function AudioProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const savedTrack = localStorage.getItem('audioTrack');
     if (savedTrack) {
-      setCurrentTrack(parseInt(savedTrack));
+      const timer = setTimeout(() => {
+        setCurrentTrack(parseInt(savedTrack));
+      }, 0);
+      return () => clearTimeout(timer);
     }
   }, []);
 

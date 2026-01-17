@@ -25,16 +25,18 @@ export default function CountdownTimer({ labels }: CountdownTimerProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [tempEventName, setTempEventName] = useState('');
   const [tempDate, setTempDate] = useState('');
-  const [isClient, setIsClient] = useState(false);
 
   // Load from localStorage after mount
   useEffect(() => {
-    setIsClient(true);
     const savedEventName = localStorage.getItem('countdownEventName');
     const savedDate = localStorage.getItem('countdownTargetDate');
     
-    if (savedEventName) setEventName(savedEventName);
-    if (savedDate) setTargetDate(new Date(savedDate));
+    const timer = setTimeout(() => {
+      if (savedEventName) setEventName(savedEventName);
+      if (savedDate) setTargetDate(new Date(savedDate));
+    }, 0);
+    
+    return () => clearTimeout(timer);
   }, []);
 
   // Calculate time left
