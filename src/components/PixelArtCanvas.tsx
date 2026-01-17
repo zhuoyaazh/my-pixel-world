@@ -6,12 +6,22 @@ type PixelArtLabels = {
   clear?: string;
 };
 
-const GRID_SIZE = 16;
+type CanvasSize = 'small' | 'medium' | 'large';
+
+const CANVAS_SIZES: Record<CanvasSize, number> = {
+  small: 12,
+  medium: 16,
+  large: 24,
+};
+
 const COLORS = ['#FFD1DC', '#FFDAB9', '#E6E6FA', '#B0E0E6', '#98D8C8', '#000000', '#FFFFFF'];
 
 export default function PixelArtCanvas({ labels = {} as PixelArtLabels }) {
+  const [canvasSize, setCanvasSize] = useState<CanvasSize>('medium');
+  const gridSize = CANVAS_SIZES[canvasSize];
+  
   const [grid, setGrid] = useState<string[][]>(
-    Array(GRID_SIZE).fill(null).map(() => Array(GRID_SIZE).fill('#FFFFFF'))
+    Array(gridSize).fill(null).map(() => Array(gridSize).fill('#FFFFFF'))
   );
   const [selectedColor, setSelectedColor] = useState('#000000');
 
@@ -22,11 +32,45 @@ export default function PixelArtCanvas({ labels = {} as PixelArtLabels }) {
   };
 
   const clearCanvas = () => {
-    setGrid(Array(GRID_SIZE).fill(null).map(() => Array(GRID_SIZE).fill('#FFFFFF')));
+    setGrid(Array(gridSize).fill(null).map(() => Array(gridSize).fill('#FFFFFF')));
+  };
+
+  const changeCanvasSize = (size: CanvasSize) => {
+    const newSize = CANVAS_SIZES[size];
+    setCanvasSize(size);
+    setGrid(Array(newSize).fill(null).map(() => Array(newSize).fill('#FFFFFF')));
   };
 
   return (
     <div className="space-y-3">
+      {/* Canvas Size Selector */}
+      <div className="flex gap-2 justify-center">
+        <button
+          onClick={() => changeCanvasSize('small')}
+          className={`px-3 py-1.5 border-2 border-black font-bold text-[9px] sm:text-[10px] transition-all ${
+            canvasSize === 'small' ? 'bg-pastel-mint scale-105' : 'bg-white hover:bg-gray-100'
+          }`}
+        >
+          📐 Small (12x12)
+        </button>
+        <button
+          onClick={() => changeCanvasSize('medium')}
+          className={`px-3 py-1.5 border-2 border-black font-bold text-[9px] sm:text-[10px] transition-all ${
+            canvasSize === 'medium' ? 'bg-pastel-mint scale-105' : 'bg-white hover:bg-gray-100'
+          }`}
+        >
+          📐 Medium (16x16)
+        </button>
+        <button
+          onClick={() => changeCanvasSize('large')}
+          className={`px-3 py-1.5 border-2 border-black font-bold text-[9px] sm:text-[10px] transition-all ${
+            canvasSize === 'large' ? 'bg-pastel-mint scale-105' : 'bg-white hover:bg-gray-100'
+          }`}
+        >
+          📐 Large (24x24)
+        </button>
+      </div>
+
       {/* Color Palette */}
       <div className="flex gap-1 sm:gap-2 justify-center flex-wrap">
         {COLORS.map((color) => (
@@ -47,9 +91,9 @@ export default function PixelArtCanvas({ labels = {} as PixelArtLabels }) {
         <div 
           className="grid gap-0 border-2 border-black bg-white"
           style={{ 
-            gridTemplateColumns: `repeat(${GRID_SIZE}, minmax(0, 1fr))`,
+            gridTemplateColumns: `repeat(${gridSize}, minmax(0, 1fr))`,
             width: '100%',
-            maxWidth: '280px',
+            maxWidth: canvasSize === 'small' ? '240px' : canvasSize === 'medium' ? '360px' : '480px',
             aspectRatio: '1/1'
           }}
         >

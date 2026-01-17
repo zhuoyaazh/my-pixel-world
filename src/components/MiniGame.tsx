@@ -2,13 +2,12 @@
 
 import { useState, useEffect, useCallback } from 'react';
 
-type GameType = 'snake' | 'tictactoe';
-type Direction = 'UP' | 'DOWN' | 'LEFT' | 'RIGHT';
-type Position = { x: number; y: number };
+type GameType = 'memory' | 'tictactoe';
 
 interface MiniGameProps {
   labels: {
-    snake: string;
+    memory?: string;
+    game2048?: string;
     tictactoe: string;
     gameOver: string;
     score: string;
@@ -23,23 +22,23 @@ interface MiniGameProps {
 }
 
 export default function MiniGame({ labels }: MiniGameProps) {
-  const [gameType, setGameType] = useState<GameType>('snake');
+  const [gameType, setGameType] = useState<GameType>('memory');
 
   return (
     <div className="space-y-4">
       {/* Game Selector */}
-      <div className="flex gap-2">
+      <div className="flex gap-2 flex-wrap justify-center">
         <button
-          onClick={() => setGameType('snake')}
-          className={`flex-1 px-3 py-2 text-[10px] sm:text-xs font-bold border-2 border-black transition-all ${
-            gameType === 'snake' ? 'bg-pastel-mint text-black' : 'bg-white hover:bg-gray-100'
+          onClick={() => setGameType('memory')}
+          className={`px-3 py-2 text-[10px] sm:text-xs font-bold border-2 border-black transition-all ${
+            gameType === 'memory' ? 'bg-pastel-mint text-black' : 'bg-white hover:bg-gray-100'
           }`}
         >
-          {labels.snake}
+          🎴 Memory
         </button>
         <button
           onClick={() => setGameType('tictactoe')}
-          className={`flex-1 px-3 py-2 text-[10px] sm:text-xs font-bold border-2 border-black transition-all ${
+          className={`px-3 py-2 text-[10px] sm:text-xs font-bold border-2 border-black transition-all ${
             gameType === 'tictactoe' ? 'bg-pastel-mint text-black' : 'bg-white hover:bg-gray-100'
           }`}
         >
@@ -48,266 +47,115 @@ export default function MiniGame({ labels }: MiniGameProps) {
       </div>
 
       {/* Game Canvas */}
-      {gameType === 'snake' ? (
-        <SnakeGame labels={labels} />
-      ) : (
-        <TicTacToeGame labels={labels} />
-      )}
+      {gameType === 'memory' && <MemoryGame labels={labels} />}
+      {gameType === 'tictactoe' && <TicTacToeGame labels={labels} />}
     </div>
   );
 }
 
-// Snake Game Component
-function SnakeGame({ labels }: MiniGameProps) {
-  const GRID_SIZE = 15;
-  const CELL_SIZE = 16;
-  const INITIAL_SPEED = 150;
+// Memory Card Game
+function MemoryGame({ labels }: MiniGameProps) {
+  const CARDS = ['🍎', '🍊', '🍋', '🍌', '🍓', '🍑', '🍒', '🥝'];
+  const [gameCards] = useState(() => [...CARDS, ...CARDS].sort(() => Math.random() - 0.5));
 
-  const [snake, setSnake] = useState<Position[]>([{ x: 7, y: 7 }]);
-  const [food, setFood] = useState<Position>({ x: 3, y: 3 });
-  const [direction, setDirection] = useState<Direction>('RIGHT');
-  const [nextDirection, setNextDirection] = useState<Direction>('RIGHT');
-  const [gameOver, setGameOver] = useState(false);
-  const [score, setScore] = useState(0);
-  const [highScore, setHighScore] = useState(0);
-  const [isPaused, setIsPaused] = useState(true);
+  const [flipped, setFlipped] = useState<number[]>([]);
+  const [matched, setMatched] = useState<number[]>([]);
+  const [moves, setMoves] = useState(0);
+  const [highScore, setHighScore] = useState<number | null>(null);
 
   // Load high score
   useEffect(() => {
-    const saved = localStorage.getItem('snakeHighScore');
+    const saved = localStorage.getItem('memoryHighScore');
     if (saved) {
-      const parsed = parseInt(saved);
-      if (!Number.isNaN(parsed)) {
-        const id = setTimeout(() => setHighScore(parsed), 0);
-        return () => clearTimeout(id);
-      }
+      const timer = setTimeout(() => {
+        setHighScore(parseInt(saved));
+      }, 0);
+      return () => clearTimeout(timer);
     }
   }, []);
 
-  // Generate random food position
-  const generateFood = useCallback((currentSnake: Position[]): Position => {
-    let newFood: Position;
-    do {
-      newFood = {
-        x: Math.floor(Math.random() * GRID_SIZE),
-        y: Math.floor(Math.random() * GRID_SIZE),
-      };
-    } while (currentSnake.some((seg) => seg.x === newFood.x && seg.y === newFood.y));
-    return newFood;
-  }, []);
-
-  // Game loop
+  // Check for matches
   useEffect(() => {
-    if (gameOver || isPaused) return;
-
-    const interval = setInterval(() => {
-      setDirection(nextDirection);
-
-      setSnake((prevSnake) => {
-        const head = prevSnake[0];
-        let newHead: Position;
-
-        switch (nextDirection) {
-          case 'UP':
-            newHead = { x: head.x, y: head.y - 1 };
-            break;
-          case 'DOWN':
-            newHead = { x: head.x, y: head.y + 1 };
-            break;
-          case 'LEFT':
-            newHead = { x: head.x - 1, y: head.y };
-            break;
-          case 'RIGHT':
-            newHead = { x: head.x + 1, y: head.y };
-            break;
-        }
-
-        // Check wall collision
-        if (
-          newHead.x < 0 ||
-          newHead.x >= GRID_SIZE ||
-          newHead.y < 0 ||
-          newHead.y >= GRID_SIZE
-        ) {
-          setGameOver(true);
-          return prevSnake;
-        }
-
-        // Check self collision
-        if (prevSnake.some((seg) => seg.x === newHead.x && seg.y === newHead.y)) {
-          setGameOver(true);
-          return prevSnake;
-        }
-
-        const newSnake = [newHead, ...prevSnake];
-
-        // Check food collision
-        if (newHead.x === food.x && newHead.y === food.y) {
-          setScore((prev) => {
-            const newScore = prev + 10;
-            if (newScore > highScore) {
-              setHighScore(newScore);
-              localStorage.setItem('snakeHighScore', newScore.toString());
-            }
-            return newScore;
-          });
-          setFood(generateFood(newSnake));
-          return newSnake;
-        } else {
-          newSnake.pop();
-          return newSnake;
-        }
-      });
-    }, INITIAL_SPEED);
-
-    return () => clearInterval(interval);
-  }, [nextDirection, food, gameOver, isPaused, highScore, generateFood]);
-
-  // Keyboard controls
-  useEffect(() => {
-    const handleKeyPress = (e: KeyboardEvent) => {
-      if (gameOver) return;
-
-      switch (e.key) {
-        case 'ArrowUp':
-        case 'w':
-          if (direction !== 'DOWN') setNextDirection('UP');
-          break;
-        case 'ArrowDown':
-        case 's':
-          if (direction !== 'UP') setNextDirection('DOWN');
-          break;
-        case 'ArrowLeft':
-        case 'a':
-          if (direction !== 'RIGHT') setNextDirection('LEFT');
-          break;
-        case 'ArrowRight':
-        case 'd':
-          if (direction !== 'LEFT') setNextDirection('RIGHT');
-          break;
-        case ' ':
-          setIsPaused((prev) => !prev);
-          break;
+    if (flipped.length === 2) {
+      const [first, second] = flipped;
+      if (gameCards[first] === gameCards[second]) {
+        setTimeout(() => {
+          setMatched([...matched, first, second]);
+          setFlipped([]);
+          setMoves(moves + 1);
+        }, 0);
+      } else {
+        // Delay 1.2s to show both cards before flipping back
+        setTimeout(() => {
+          setFlipped([]);
+          setMoves(moves + 1);
+        }, 1200);
       }
-    };
+    }
+  }, [flipped, matched, gameCards, moves]);
 
-    window.addEventListener('keydown', handleKeyPress);
-    return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [direction, gameOver]);
-
-  const restartGame = () => {
-    setSnake([{ x: 7, y: 7 }]);
-    setFood({ x: 3, y: 3 });
-    setDirection('RIGHT');
-    setNextDirection('RIGHT');
-    setGameOver(false);
-    setScore(0);
-    setIsPaused(true);
+  const handleCardClick = (index: number) => {
+    if (flipped.includes(index) || matched.includes(index) || flipped.length === 2) return;
+    setFlipped([...flipped, index]);
   };
+
+  const restart = () => {
+    if (matched.length === gameCards.length) {
+      if (highScore === null || moves < highScore) {
+        setHighScore(moves);
+        localStorage.setItem('memoryHighScore', moves.toString());
+      }
+    }
+    setFlipped([]);
+    setMatched([]);
+    setMoves(0);
+  };
+
+  const isWon = matched.length === gameCards.length;
 
   return (
     <div className="space-y-3">
-      {/* Score Display */}
       <div className="flex justify-between text-[9px] sm:text-[10px] font-bold">
-        <span>
-          {labels.score}: {score}
-        </span>
-        <span>
-          {labels.highScore}: {highScore}
-        </span>
+        <span>{labels.score}: {moves}</span>
+        {highScore !== null && <span>{labels.highScore}: {highScore}</span>}
       </div>
 
-      {/* Game Board */}
-      <div className="relative mx-auto" style={{ width: GRID_SIZE * CELL_SIZE }}>
-        <div
-          className="border-4 border-black bg-white grid relative"
-          style={{
-            width: GRID_SIZE * CELL_SIZE,
-            height: GRID_SIZE * CELL_SIZE,
-            gridTemplateColumns: `repeat(${GRID_SIZE}, ${CELL_SIZE}px)`,
-            gridTemplateRows: `repeat(${GRID_SIZE}, ${CELL_SIZE}px)`,
-          }}
-        >
-          {/* Grid cells */}
-          {Array.from({ length: GRID_SIZE * GRID_SIZE }).map((_, i) => (
-            <div key={i} className="border border-gray-200" />
-          ))}
+      {isWon && (
+        <div className="text-center py-4 bg-pastel-yellow border-2 border-black">
+          <p className="text-sm font-bold text-retro-border">🎉 {labels.youWin}!</p>
+        </div>
+      )}
 
-          {/* Snake */}
-          {snake.map((segment, idx) => (
-            <div
-              key={idx}
-              className={`absolute ${idx === 0 ? 'bg-pastel-mint' : 'bg-pastel-blue'}`}
-              style={{
-                left: segment.x * CELL_SIZE,
-                top: segment.y * CELL_SIZE,
-                width: CELL_SIZE,
-                height: CELL_SIZE,
-                border: '1px solid black',
-              }}
-            />
-          ))}
-
-          {/* Food */}
-          <div
-            className="absolute bg-pastel-pink"
+      <div className="grid grid-cols-4 gap-2 mx-auto">
+        {gameCards.map((card, idx) => (
+          <button
+            key={idx}
+            onClick={() => handleCardClick(idx)}
+            disabled={isWon}
+            className="w-16 h-16 sm:w-20 sm:h-20 border-4 border-black font-bold text-2xl transition-all"
             style={{
-              left: food.x * CELL_SIZE,
-              top: food.y * CELL_SIZE,
-              width: CELL_SIZE,
-              height: CELL_SIZE,
-              border: '1px solid black',
+              backgroundColor: flipped.includes(idx) || matched.includes(idx) ? '#ffd1dc' : '#b8e6f0',
+              cursor: isWon ? 'default' : 'pointer',
             }}
-          />
-
-          {/* Game Over Overlay */}
-          {gameOver && (
-            <div className="absolute inset-0 bg-black bg-opacity-70 flex items-center justify-center">
-              <div className="text-center">
-                <p className="text-white font-bold text-sm mb-2">{labels.gameOver}</p>
-                <p className="text-pastel-yellow font-bold text-xs">
-                  {labels.score}: {score}
-                </p>
-              </div>
-            </div>
-          )}
-
-          {/* Paused Overlay */}
-          {isPaused && !gameOver && (
-            <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-              <p className="text-white font-bold text-[10px]">SPACE to start</p>
-            </div>
-          )}
-        </div>
+          >
+            {flipped.includes(idx) || matched.includes(idx) ? card : '?'}
+          </button>
+        ))}
       </div>
 
-      {/* Controls */}
-      <div className="space-y-2">
-        <div className="flex gap-2">
-          <button
-            onClick={() => setIsPaused((prev) => !prev)}
-            disabled={gameOver}
-            className="flex-1 px-3 py-2 bg-pastel-yellow border-2 border-black font-bold text-[9px] sm:text-[10px] hover:bg-opacity-80 disabled:opacity-50"
-          >
-            {isPaused ? '▶️ PLAY' : '⏸️ PAUSE'}
-          </button>
-          <button
-            onClick={restartGame}
-            className="flex-1 px-3 py-2 bg-pastel-purple border-2 border-black font-bold text-[9px] sm:text-[10px] text-white hover:bg-opacity-80"
-          >
-            {labels.restart}
-          </button>
-        </div>
-        <p className="text-[8px] text-center text-gray-600 font-bold">
-          Arrow keys / WASD to move, SPACE to pause
-        </p>
-      </div>
+      <button
+        onClick={restart}
+        className="w-full px-3 py-2 bg-pastel-purple border-2 border-black font-bold text-[9px] sm:text-[10px] text-white hover:bg-opacity-80"
+      >
+        {labels.restart}
+      </button>
     </div>
   );
 }
 
 // Tic Tac Toe Game Component
 function TicTacToeGame({ labels }: MiniGameProps) {
+  const [difficulty, setDifficulty] = useState<'easy' | 'hard' | null>(null);
   type Cell = 'X' | 'O' | null;
   const [board, setBoard] = useState<Cell[]>(Array(9).fill(null));
   const [isPlayerTurn, setIsPlayerTurn] = useState(true);
@@ -370,6 +218,16 @@ function TicTacToeGame({ labels }: MiniGameProps) {
   }, [checkWinner]);
 
   const getBestMove = useCallback((squares: Cell[]): number => {
+    if (difficulty === 'easy') {
+      // Easy mode: random valid move
+      const empty = [];
+      for (let i = 0; i < 9; i++) {
+        if (squares[i] === null) empty.push(i);
+      }
+      return empty.length > 0 ? empty[Math.floor(Math.random() * empty.length)] : -1;
+    }
+
+    // Hard mode: minimax
     let bestScore = -Infinity;
     let bestMove = -1;
 
@@ -386,7 +244,7 @@ function TicTacToeGame({ labels }: MiniGameProps) {
     }
 
     return bestMove;
-  }, [minimax]);
+  }, [minimax, difficulty]);
 
   useEffect(() => {
     if (!isPlayerTurn && !winner) {
@@ -432,6 +290,26 @@ function TicTacToeGame({ labels }: MiniGameProps) {
 
   return (
     <div className="space-y-3">
+      {/* Difficulty selector */}
+      <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', fontSize: '12px' }}>
+        <label style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+          <input 
+            type="radio" 
+            name="difficulty" 
+            checked={difficulty === 'easy'}
+            onChange={() => { setDifficulty('easy'); restartGame(); }}
+          /> Easy
+        </label>
+        <label style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+          <input 
+            type="radio" 
+            name="difficulty" 
+            checked={difficulty === 'hard'}
+            onChange={() => { setDifficulty('hard'); restartGame(); }}
+          /> Hard
+        </label>
+      </div>
+
       {/* Status */}
       <div className="text-center text-[10px] sm:text-xs font-bold">
         {winner ? (

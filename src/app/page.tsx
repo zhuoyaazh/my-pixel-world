@@ -433,12 +433,12 @@ export default function Home() {
             </div>
           </RetroCard>
 
-          {/* Weather Widget */}
+          {/* Random Quote Generator */}
           <RetroCard 
-            title={t.weather}
-            className="bg-pastel-mint border-4 border-pastel-yellow hover:shadow-xl transition-all duration-300"
+            title={t.quoteLabels.heading}
+            className="bg-pastel-pink border-4 border-pastel-yellow hover:shadow-xl transition-all duration-300"
           >
-            <WeatherWidget labels={t.weatherLabels} />
+            <RandomQuoteGenerator labels={t.quoteLabels} />
           </RetroCard>
 
           {/* PhotoBooth */}
@@ -449,7 +449,7 @@ export default function Home() {
               className="bg-pastel-yellow border-4 border-[#d6336c] hover:border-pastel-blue hover:shadow-xl transition-all duration-300 transform hover:scale-105"
             >
               <div className="flex flex-col items-center justify-center text-center">
-                <div className="w-full px-6 py-5 sm:px-8 sm:py-6 bg-[#d6336c] rounded-lg space-y-3">
+                <div className="w-full px-6 py-6 sm:px-8 sm:py-8 bg-[#d6336c] rounded-lg space-y-3 min-h-75 flex flex-col items-center justify-center">
                   <div className="text-4xl sm:text-5xl animate-bounce">📷</div>
                   <p className="text-[10px] sm:text-xs font-bold text-white uppercase tracking-wide">
                     Capture Cute Moments!
@@ -474,7 +474,7 @@ export default function Home() {
                 className="bg-pastel-mint border-4 border-pastel-purple hover:border-pastel-blue hover:shadow-xl transition-all duration-300 transform hover:scale-105"
               >
                 <div className="flex flex-col items-center justify-center text-center">
-                  <div className="w-full px-6 py-5 sm:px-8 sm:py-6 bg-pastel-purple rounded-lg space-y-3">
+                  <div className="w-full px-6 py-6 sm:px-8 sm:py-8 bg-pastel-purple rounded-lg space-y-3 min-h-75 flex flex-col items-center justify-center">
                     <div className="text-4xl sm:text-5xl animate-bounce">💬</div>
                     <p className="text-[10px] sm:text-xs font-bold text-white uppercase tracking-wide">
                       {t.guestbook1}
@@ -490,6 +490,25 @@ export default function Home() {
               </RetroCard>
             </Link>
           )}
+
+          {/* Weather Widget */}
+          <RetroCard 
+            title={t.weather}
+            className="bg-pastel-mint border-4 border-pastel-yellow hover:shadow-xl transition-all duration-300"
+          >
+            <WeatherWidget labels={t.weatherLabels} />
+          </RetroCard>
+
+          {/* Spotify Widget */}
+          <RetroCard title={t.nowPlaying} className="lg:col-span-2">
+            <SpotifyEmbed
+              src="https://open.spotify.com/embed/playlist/3IDNsoyqeq1nejHYCI2tjZ?utm_source=generator"
+              responsive
+              mobileHeight={200}
+              desktopHeight={352}
+              title="zhuoyaazh playlist"
+            />
+          </RetroCard>
 
           {/* Countdown Timer */}
           <RetroCard 
@@ -508,25 +527,6 @@ export default function Home() {
             pixelArtLabels={t.pixelArtLabels}
             gameLabels={t.gameLabels}
           />
-
-          {/* Random Quote Generator */}
-          <RetroCard 
-            title={t.quoteLabels.heading}
-            className="bg-pastel-pink border-4 border-pastel-yellow hover:shadow-xl transition-all duration-300"
-          >
-            <RandomQuoteGenerator labels={t.quoteLabels} />
-          </RetroCard>
-
-          {/* Spotify Widget */}
-          <RetroCard title={t.nowPlaying} className="lg:col-span-2">
-            <SpotifyEmbed
-              src="https://open.spotify.com/embed/playlist/3IDNsoyqeq1nejHYCI2tjZ?utm_source=generator"
-              responsive
-              mobileHeight={200}
-              desktopHeight={352}
-              title="zhuoyaazh playlist"
-            />
-          </RetroCard>
 
         </div>
 

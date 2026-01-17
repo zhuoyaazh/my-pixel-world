@@ -8,26 +8,28 @@ type VisitorLabels = {
 };
 
 export default function VisitorCounter({ labels = {} as VisitorLabels }) {
-  const [count] = useState(() => {
-    if (typeof window === 'undefined') return 0;
-    const current = localStorage.getItem('visitor_count');
-    if (!current) {
-      const num = Math.floor(Math.random() * 1000) + 100;
-      localStorage.setItem('visitor_count', String(num));
-      return num;
-    }
-    return parseInt(current);
-  });
+  const [count, setCount] = useState(0);
 
   useEffect(() => {
-    const lastVisit = localStorage.getItem('last_visit');
-    const today = new Date().toDateString();
-    if (lastVisit !== today) {
-      const current = localStorage.getItem('visitor_count') || '100';
-      const next = parseInt(current) + 1;
-      localStorage.setItem('visitor_count', String(next));
-      localStorage.setItem('last_visit', today);
-    }
+    setTimeout(() => {
+      const current = localStorage.getItem('visitor_count');
+      if (!current) {
+        const num = Math.floor(Math.random() * 1000) + 100;
+        localStorage.setItem('visitor_count', String(num));
+        setCount(num);
+      } else {
+        const lastVisit = localStorage.getItem('last_visit');
+        const today = new Date().toDateString();
+        if (lastVisit !== today) {
+          const next = parseInt(current) + 1;
+          localStorage.setItem('visitor_count', String(next));
+          localStorage.setItem('last_visit', today);
+          setCount(next);
+        } else {
+          setCount(parseInt(current));
+        }
+      }
+    }, 0);
   }, []);
 
   return (

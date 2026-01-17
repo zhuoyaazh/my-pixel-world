@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
 
 interface PixelCharacterProps {
   imageSrc?: string;
@@ -13,7 +12,8 @@ export default function PixelCharacter({
   message = '嗨! Welcome! ✨' 
 }: PixelCharacterProps) {
   const [isWaving, setIsWaving] = useState(false);
-  const [imageError, setImageError] = useState(false);
+  // Always show fallback since character image is not available
+  const [imageError, setImageError] = useState(true);
 
   return (
     <div 
@@ -23,15 +23,14 @@ export default function PixelCharacter({
       <div className={`transition-transform duration-300 ${isWaving ? 'animate-bounce' : 'group-hover:scale-110'}`}>
         <div className="relative">
           {/* Karakter Pixel */}
-          <div className="w-20 h-20 sm:w-28 sm:h-28 md:w-32 md:h-32 bg-white border-3 sm:border-4 border-retro-border shadow-retro overflow-hidden relative">
+          <div className="w-20 h-20 sm:w-28 sm:h-28 md:w-32 md:h-32 bg-white border-3 sm:border-4 border-retro-border shadow-retro overflow-hidden relative flex items-center justify-center">
             {!imageError ? (
-              <Image
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
                 src={imageSrc}
                 alt="Pixel Character"
-                fill
-                className="object-contain pixelated p-2"
+                className="max-w-full max-h-full object-contain p-2 pixelated"
                 onError={() => setImageError(true)}
-                priority
               />
             ) : (
               // Fallback jika gambar belum ada

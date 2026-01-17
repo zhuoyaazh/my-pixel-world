@@ -119,8 +119,8 @@ export default function WeatherWidget({ labels }: WeatherWidgetProps) {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center text-center">
-      <div className="w-full px-6 py-5 sm:px-8 sm:py-6 bg-pastel-yellow rounded-lg space-y-3">
+    <div className="text-center">
+      <div className="w-full px-6 py-6 sm:px-8 sm:py-8 bg-pastel-yellow rounded-lg space-y-3 min-h-55 flex flex-col items-center justify-center">
         {/* Weather Icon/Emoji - Large Display */}
         {weather && !error && (
           <div className="text-4xl sm:text-5xl animate-bounce">

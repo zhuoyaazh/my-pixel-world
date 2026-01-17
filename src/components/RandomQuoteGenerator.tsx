@@ -66,11 +66,7 @@ const QUOTES: Quote[] = [
 
 export default function RandomQuoteGenerator({ labels }: RandomQuoteGeneratorProps) {
   const [filter, setFilter] = useState<'all' | Quote['category']>('all');
-  const [currentQuote, setCurrentQuote] = useState<Quote | null>(() => {
-    const filteredQuotes = QUOTES;
-    const randomIndex = Math.floor(Math.random() * filteredQuotes.length);
-    return filteredQuotes[randomIndex];
-  });
+  const [currentQuote, setCurrentQuote] = useState<Quote | null>(null);
   const [isAnimating, setIsAnimating] = useState(false);
 
   const getRandomQuote = useCallback(() => {
@@ -89,6 +85,14 @@ export default function RandomQuoteGenerator({ labels }: RandomQuoteGeneratorPro
       setIsAnimating(false);
     }, 300);
   }, [getRandomQuote]);
+
+  // Load initial quote on mount
+  useEffect(() => {
+    setTimeout(() => {
+      const randomIndex = Math.floor(Math.random() * QUOTES.length);
+      setCurrentQuote(QUOTES[randomIndex]);
+    }, 0);
+  }, []);
 
   // Refresh when filter changes (async to avoid sync setState warning)
   useEffect(() => {
@@ -148,7 +152,7 @@ export default function RandomQuoteGenerator({ labels }: RandomQuoteGeneratorPro
             filter === 'mentalhealth' ? 'bg-pastel-purple text-white' : 'bg-white hover:bg-gray-100'
           }`}
         >
-          💚 {labels.category.mentalhealth}
+          � {labels.category.mentalhealth}
         </button>
       </div>
 
@@ -159,7 +163,7 @@ export default function RandomQuoteGenerator({ labels }: RandomQuoteGeneratorPro
             isAnimating ? 'opacity-0' : 'opacity-100'
           }`}
         >
-          <div className={`${getCategoryColor(currentQuote.category)} border-4 border-black p-4 space-y-3`}>
+          <div className={`${getCategoryColor(currentQuote.category)} px-6 py-6 sm:px-8 sm:py-8 space-y-3 rounded-lg`}>
             {/* Category Badge */}
             <div className="flex items-center gap-2">
               <span className="text-lg">{getCategoryIcon(currentQuote.category)}</span>
