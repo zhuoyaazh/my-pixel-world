@@ -35,7 +35,7 @@ export default function PixelCharacter({
               />
             ) : (
               // Fallback jika gambar belum ada
-              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-pastel-pink to-pastel-purple">
+              <div className="w-full h-full flex items-center justify-center bg-linear-to-br from-pastel-pink to-pastel-purple">
                 <span className="text-3xl sm:text-4xl md:text-5xl">🎨</span>
               </div>
             )}

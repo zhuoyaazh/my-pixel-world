@@ -174,24 +174,6 @@ export default function Home() {
 
   const query = searchQuery.trim().toLowerCase();
   const matches = (text?: string) => (text || '').toLowerCase().includes(query);
-
-  const filteredOrganizations = query
-    ? ORGANIZATIONS.map((entry) => ({
-        ...entry,
-        positions: entry.positions.filter(
-          (p) => matches(entry.year) || matches(p.role) || matches(p.org) || matches(p.description)
-        ),
-      })).filter((e) => e.positions.length > 0)
-    : ORGANIZATIONS;
-
-  const filteredCommittees = query
-    ? COMMITTEES.map((entry) => ({
-        ...entry,
-        roles: entry.roles.filter(
-          (r) => matches(entry.year) || matches(r.role) || matches(r.event) || matches(r.description)
-        ),
-      })).filter((e) => e.roles.length > 0)
-    : COMMITTEES;
   
   const linksData = [
     { label: '📧 Email (Pribadi)', href: EMAIL_URL, aria: 'Send personal email', className: 'bg-pastel-blue hover:bg-pastel-purple' },
@@ -209,8 +191,8 @@ export default function Home() {
   return (
     <div className={`min-h-screen font-neue transition-colors duration-300 ${
       darkMode 
-        ? 'bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900' 
-        : 'bg-gradient-to-b from-[#FFB6D9] via-pastel-pink to-[#FFC0CB]'
+        ? 'bg-linear-to-b from-gray-900 via-gray-800 to-gray-900'
+        : 'bg-linear-to-b from-[#FFB6D9] via-pastel-pink to-[#FFC0CB]'
     }`}>
       {/* Floating clouds animation - bisa ditambahin nanti */}
       <div className="absolute inset-0 overflow-hidden opacity-30">
@@ -281,7 +263,7 @@ export default function Home() {
           <RetroCard title={t.aboutTitle} className="lg:col-span-2">
             <div className="space-y-4">
               <p className="text-base sm:text-lg leading-relaxed text-retro-text">
-                <span className="font-press text-xs sm:text-sm break-words">{t.greeting}</span> 👋
+                <span className="font-press text-xs sm:text-sm wrap-break-word">{t.greeting}</span> 👋
               </p>
               <p className="text-xs sm:text-sm leading-relaxed text-retro-text">
                 ✨ {t.about}
@@ -323,16 +305,21 @@ export default function Home() {
             <RetroCard 
               title="PHOTOBOOTH"
               clickable
-              className="bg-gradient-to-br from-pastel-yellow to-pastel-mint border-4 border-[#d6336c] hover:border-pastel-blue hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+              className="bg-pastel-yellow border-4 border-[#d6336c] hover:border-pastel-blue hover:shadow-xl transition-all duration-300 transform hover:scale-105"
             >
-              <div className="text-center space-y-2">
-                <p className="text-4xl sm:text-5xl">📷✨</p>
-                <p className="text-[9px] sm:text-xs font-bold text-pastel-purple">
-                  Capture cute moments!
-                </p>
-                <p className="text-[8px] sm:text-[9px] text-gray-600">
-                  Create your pixel-perfect photobooth strip
-                </p>
+              <div className="flex flex-col items-center justify-center text-center">
+                <div className="w-full px-6 py-5 sm:px-8 sm:py-6 bg-[#d6336c] rounded-lg space-y-3">
+                  <div className="text-4xl sm:text-5xl animate-bounce">📷</div>
+                  <p className="text-[10px] sm:text-xs font-bold text-white uppercase tracking-wide">
+                    Capture Cute Moments!
+                  </p>
+                  <p className="text-[8px] sm:text-[9px] text-white font-bold">
+                    Create your pixel-perfect photobooth strip ✨
+                  </p>
+                  <p className="text-[8px] sm:text-xs font-bold text-pastel-yellow animate-pulse">
+                    👉 Click to start snapping 👈
+                  </p>
+                </div>
               </div>
             </RetroCard>
           </Link>
@@ -407,7 +394,7 @@ export default function Home() {
               </button>
               <button
                 onClick={() => setActiveTab('committee')}
-                className={`px-4 py-2 font-press text-[10px] sm:text-xs transition-colors border-b-2 break-words ${
+                className={`px-4 py-2 font-press text-[10px] sm:text-xs transition-colors border-b-2 wrap-break-word ${
                   activeTab === 'committee'
                     ? 'border-b-pastel-yellow text-pastel-yellow'
                     : 'border-b-transparent text-retro-text/50 hover:text-retro-text'

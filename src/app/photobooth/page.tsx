@@ -1,12 +1,12 @@
 'use client';
 
 import Link from 'next/link';
-import PhotoBooth from '@/components/PhotoBooth';
+import PhotoboothWidget from '@/components/PhotoboothWidget';
 import RetroCard from '@/components/RetroCard';
 
 export default function PhotoBoothPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#FFB6D9] via-pastel-pink to-[#FFC0CB] p-4 sm:p-6">
+    <div className="min-h-screen bg-linear-to-b from-[#FFB6D9] via-pastel-pink to-[#FFC0CB] p-4 sm:p-6">
       <div className="max-w-2xl mx-auto space-y-6">
         {/* Header */}
         <div className="text-center space-y-2 sm:space-y-3">
@@ -19,7 +19,7 @@ export default function PhotoBoothPage() {
         </div>
 
         {/* Main PhotoBooth Component */}
-        <PhotoBooth />
+        <PhotoboothWidget />
 
         {/* Info Card */}
         <RetroCard className="space-y-2">

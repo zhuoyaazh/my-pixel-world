@@ -121,7 +121,7 @@ export default function Showcase({ title = 'Showcase', labels, searchQuery = '' 
       </div>
 
       {/* Content */}
-      <div className="min-h-[200px]">
+      <div className="min-h-50 w-full">
         {activeTab === 'projects' && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {filteredProjects.map((item, index) => (
@@ -192,7 +192,7 @@ export default function Showcase({ title = 'Showcase', labels, searchQuery = '' 
             {filteredGallery.map((item, idx) => (
               <div
                 key={`${item.title}-${idx}`}
-                className="aspect-square border-2 border-pastel-purple bg-gradient-to-br from-pastel-pink to-pastel-blue flex items-center justify-center text-4xl"
+                className="aspect-square border-2 border-pastel-purple bg-linear-to-br from-pastel-pink to-pastel-blue flex items-center justify-center text-4xl"
                 title={item.description}
               >
                 {item.title}

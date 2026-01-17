@@ -65,7 +65,7 @@ export default function FunZone({ title = 'Fun Zone', labels, pomodoroLabels, vi
       </div>
 
       {/* Content */}
-      <div className="min-h-[200px]">
+      <div className="min-h-50">
         {activeTab === 'pomodoro' && <PomodoroTimer labels={pomodoroLabels} />}
         {activeTab === 'visitor' && <VisitorCounter labels={visitorLabels} />}
         {activeTab === 'pixelart' && <PixelArtCanvas labels={pixelArtLabels} />}

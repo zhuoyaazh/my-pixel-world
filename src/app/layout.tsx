@@ -29,9 +29,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${pressStart.variable} ${neuePixel.variable} antialiased`}
+        className={`${pressStart.variable} ${neuePixel.variable} antialiased min-h-screen flex flex-col`}
       >
-        {children}
+        <div className="flex-1 flex flex-col">{children}</div>
+        <footer className="w-full text-center text-[11px] sm:text-xs text-gray-600 py-4 border-t border-gray-200 bg-white/80">
+          © 2026 zhuoyaazh. All rights reserved.
+        </footer>
       </body>
     </html>
   );

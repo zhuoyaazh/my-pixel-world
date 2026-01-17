@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import RetroCard from '@/components/RetroCard';
 import Link from 'next/link';
 
@@ -13,26 +13,12 @@ interface Message {
 export default function MessagesPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
-  const [loading, setLoading] = useState(true);
   const [submitted, setSubmitted] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [passwordInput, setPasswordInput] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const GUESTBOOK_PASSWORD = 'pixel2026'; // Change this to your desired password
-
-  // Load messages from localStorage
-  useEffect(() => {
-    const stored = localStorage.getItem('guestbook_messages');
-    if (stored) {
-      try {
-        setMessages(JSON.parse(stored));
-      } catch (e) {
-        console.error('Failed to parse messages:', e);
-      }
-    }
-    setLoading(false);
-  }, []);
 
   // Save messages to localStorage
   const saveMessages = (newMessages: Message[]) => {
@@ -93,7 +79,7 @@ export default function MessagesPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#FFB6D9] via-pastel-pink to-[#FFC0CB] p-4 sm:p-6">
+    <div className="min-h-screen bg-linear-to-b from-[#FFB6D9] via-pastel-pink to-[#FFC0CB] p-4 sm:p-6">
       <div className="max-w-2xl mx-auto space-y-4 sm:space-y-6">
         {/* Header */}
         <div className="text-center space-y-2 sm:space-y-3">
@@ -180,11 +166,7 @@ export default function MessagesPage() {
               📖 ALL MESSAGES ({messages.length})
             </h2>
 
-            {loading ? (
-              <RetroCard>
-                <p className="text-[8px] sm:text-[9px] text-pastel-purple font-bold">Loading messages...</p>
-              </RetroCard>
-            ) : messages.length === 0 ? (
+            {messages.length === 0 ? (
               <RetroCard>
                 <p className="text-[8px] sm:text-[9px] text-pastel-purple font-bold text-center">
                   No messages yet... Be the first! 👋
@@ -195,12 +177,12 @@ export default function MessagesPage() {
                 {messages.map((msg) => (
                   <RetroCard key={msg.id} className="space-y-1 sm:space-y-2">
                     <div className="flex justify-between items-start gap-2">
-                      <p className="text-[9px] sm:text-xs font-bold text-pastel-blue break-words flex-1 whitespace-pre-wrap">
+                      <p className="text-[9px] sm:text-xs font-bold text-pastel-blue wrap-break-word flex-1 whitespace-pre-wrap">
                         {msg.text}
                       </p>
                       <button
                         onClick={() => handleDeleteClick(msg.id)}
-                        className="flex-shrink-0 px-2 py-1 bg-red-400 text-white border border-red-600 text-[8px] font-bold hover:bg-red-500 transition-all"
+                        className="shrink-0 px-2 py-1 bg-red-400 text-white border border-red-600 text-[8px] font-bold hover:bg-red-500 transition-all"
                         title="Delete this message"
                       >
                         ✕

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import RetroCard from './RetroCard';
 
 type WeatherLabels = {
@@ -83,7 +83,7 @@ export default function WeatherWidget({ labels }: WeatherWidgetProps) {
   };
 
   // Get weather by city search
-  const getWeatherByCity = async (city: string) => {
+  const getWeatherByCity = useCallback(async (city: string) => {
     if (!city.trim()) return;
 
     setLoading(true);
@@ -107,12 +107,12 @@ export default function WeatherWidget({ labels }: WeatherWidgetProps) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [ui.errorFetch]);
 
   // Load default city on mount
   useEffect(() => {
     getWeatherByCity('Bandung');
-  }, []);
+  }, [getWeatherByCity]);
 
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

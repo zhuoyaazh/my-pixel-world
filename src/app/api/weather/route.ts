@@ -61,8 +61,7 @@ export async function GET(request: NextRequest) {
 
     // Map weather codes to descriptions and icons
     const weatherCode = weatherData.current.weather_code;
-    const isDay = true; // simplified, could be enhanced with time data
-    const weatherInfo = getWeatherInfo(weatherCode, isDay);
+    const weatherInfo = getWeatherInfo(weatherCode);
 
     return NextResponse.json({
       name: cityName,
@@ -92,7 +91,7 @@ export async function GET(request: NextRequest) {
 
 // WMO Weather interpretation codes
 // https://www.open-meteo.com/en/docs
-function getWeatherInfo(code: number, isDay: boolean) {
+function getWeatherInfo(code: number) {
   const weatherMap: Record<number, { condition: string; description: string; icon: string }> = {
     0: { condition: 'Clear', description: 'Clear sky', icon: '☀️' },
     1: { condition: 'Cloudy', description: 'Mainly clear', icon: '⛅' },

@@ -3,49 +3,32 @@
 import { useState, useEffect } from 'react';
 
 type VisitorLabels = {
-  loading?: string;
   heading?: string;
   thanks?: string;
 };
 
 export default function VisitorCounter({ labels = {} as VisitorLabels }) {
-  const [count, setCount] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const [count] = useState(() => {
+    if (typeof window === 'undefined') return 0;
+    const current = localStorage.getItem('visitor_count');
+    if (!current) {
+      const num = Math.floor(Math.random() * 1000) + 100;
+      localStorage.setItem('visitor_count', String(num));
+      return num;
+    }
+    return parseInt(current);
+  });
 
   useEffect(() => {
-    // Get current count from localStorage
-    const currentCount = localStorage.getItem('visitor_count');
-    
-    if (currentCount) {
-      setCount(parseInt(currentCount));
-    } else {
-      // First visitor
-      const newCount = Math.floor(Math.random() * 1000) + 100; // Start with random number
-      localStorage.setItem('visitor_count', newCount.toString());
-      setCount(newCount);
-    }
-
-    // Increment on each visit
     const lastVisit = localStorage.getItem('last_visit');
     const today = new Date().toDateString();
-    
     if (lastVisit !== today) {
-      const newCount = currentCount ? parseInt(currentCount) + 1 : 100;
-      localStorage.setItem('visitor_count', newCount.toString());
+      const current = localStorage.getItem('visitor_count') || '100';
+      const next = parseInt(current) + 1;
+      localStorage.setItem('visitor_count', String(next));
       localStorage.setItem('last_visit', today);
-      setCount(newCount);
     }
-
-    setLoading(false);
   }, []);
-
-  if (loading) {
-    return (
-      <div className="text-center text-[8px] sm:text-[9px] text-gray-600 font-bold">
-        {labels.loading ?? 'Loading...'}
-      </div>
-    );
-  }
 
   return (
     <div className="text-center space-y-2">
