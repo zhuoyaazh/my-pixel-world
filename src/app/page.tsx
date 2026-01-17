@@ -4,17 +4,16 @@ import RetroCard from '@/components/RetroCard';
 import PixelCharacter from '@/components/PixelCharacter';
 import SpotifyEmbed from '@/components/SpotifyEmbed';
 import RetroLinkButton from '@/components/RetroLinkButton';
-import PortfolioSection from '@/components/PortfolioSection';
 import WeatherWidget from '@/components/WeatherWidget';
 import FunZone from '@/components/FunZone';
-import Showcase from '@/components/Showcase';
+import CountdownTimer from '@/components/CountdownTimer';
+import RandomQuoteGenerator from '@/components/RandomQuoteGenerator';
 import { INSTAGRAM_URL, PORTFOLIO_URL, GITHUB_URL, EMAIL_URL, EMAIL_URL_2 } from '@/config/links';
-import { ORGANIZATIONS, COMMITTEES } from '@/config/portfolio';
 import Link from 'next/link';
 import { useState } from 'react';
+import AudioToggle from '@/components/AudioToggle';
 
 export default function Home() {
-  const [activeTab, setActiveTab] = useState<'org' | 'committee'>('org');
   const [darkMode, setDarkMode] = useState(false);
   const [language, setLanguage] = useState<'EN' | 'ID' | '中文'>('EN');
   const [searchQuery, setSearchQuery] = useState('');
@@ -23,10 +22,13 @@ export default function Home() {
       welcome: 'Welcome to My Cozy Digital Space ✨',
       greeting: "Hi! I'm zhuoyaazh",
       about:
-        'Physics Student at ITB | Psychology & Mental Health Enthusiast | Exploring Digital Art, IT, and Chinese Language & Culture | Passionate about Human Connection & Mental Wellbeing',
+        'Undergraduate Physics Student at Bandung Institute of Technology (ITB) | Exploring the intersection of IT, Digital Art, & Psychology | Passionate about Chinese Language & Culture',
       search: '🔍 Search...',
       aboutTitle: 'About Me',
       linksTitle: 'Links',
+      photobooth: 'PHOTOBOOTH',
+      showcaseBtn: '🎨 SHOWCASE',
+      experienceBtn: '💼 EXPERIENCE',
       guestbookTitle: 'Guestbook',
       guestbook1: 'Share Your Thoughts!',
       guestbook2: 'Anonymous messages welcome ✨',
@@ -44,7 +46,7 @@ export default function Home() {
         errorFetch: 'Failed to fetch weather',
       },
       funZone: 'Fun Zone',
-      funTabs: { pomodoro: '⏱️ POMODORO', visitor: '👥 VISITORS', pixelart: '🎨 PIXEL ART' },
+      funTabs: { pomodoro: '⏱️ POMODORO', visitor: '👥 VISITORS', pixelart: '🎨 PIXEL ART', game: '🎮 GAMES' },
       pomodoroLabels: {
         workTab: '🎯 WORK',
         breakTab: '☕ BREAK',
@@ -62,6 +64,42 @@ export default function Home() {
       pixelArtLabels: {
         clear: '🗑️ CLEAR CANVAS',
       },
+      gameLabels: {
+        snake: '🐍 SNAKE',
+        tictactoe: '⭕ TIC TAC TOE',
+        gameOver: '💀 GAME OVER',
+        score: 'Score',
+        highScore: 'High Score',
+        restart: '🔄 RESTART',
+        yourTurn: 'Your Turn',
+        computerTurn: 'Computer Turn',
+        youWin: '🎉 YOU WIN!',
+        youLose: '😢 YOU LOSE',
+        draw: '🤝 DRAW',
+      },
+      countdownLabels: {
+        heading: '⏳ COUNTDOWN',
+        eventName: 'Event Name',
+        eventDate: 'Event Date',
+        days: 'DAYS',
+        hours: 'HOURS',
+        minutes: 'MINS',
+        seconds: 'SECS',
+        eventPassed: 'Event has passed!',
+        setEvent: 'SET EVENT',
+        save: 'SAVE',
+        cancel: 'CANCEL',
+      },
+      quoteLabels: {
+        heading: '💭 QUOTE',
+        refresh: 'NEW QUOTE',
+        loading: 'Loading...',
+        category: {
+          motivation: 'MOTIVATION',
+          psychology: 'PSYCHOLOGY',
+          mentalhealth: 'MENTAL HEALTH',
+        },
+      },
       showcase: 'Showcase',
       showcaseTabs: { projects: '💼 PROJECTS', blog: '📝 BLOG', gallery: '🖼️ GALLERY' },
       experience: 'Experience',
@@ -77,6 +115,9 @@ export default function Home() {
       search: '🔍 Cari...',
       aboutTitle: 'Tentang Aku',
       linksTitle: 'Tautan',
+      photobooth: 'PHOTOBOOTH',
+      showcaseBtn: '🎨 SHOWCASE',
+      experienceBtn: '💼 PENGALAMAN',
       guestbookTitle: 'Guestbook',
       guestbook1: 'Tinggalkan pesan!',
       guestbook2: 'Pesan anonim diterima ✨',
@@ -94,7 +135,7 @@ export default function Home() {
         errorFetch: 'Gagal mengambil data cuaca',
       },
       funZone: 'Zona Seru',
-      funTabs: { pomodoro: '⏱️ POMODORO', visitor: '👥 PENGUNJUNG', pixelart: '🎨 PIXEL ART' },
+      funTabs: { pomodoro: '⏱️ POMODORO', visitor: '👥 PENGUNJUNG', pixelart: '🎨 PIXEL ART', game: '🎮 GAMES' },
       pomodoroLabels: {
         workTab: '🎯 FOKUS',
         breakTab: '☕ ISTIRAHAT',
@@ -112,6 +153,42 @@ export default function Home() {
       pixelArtLabels: {
         clear: '🗑️ HAPUS KANVAS',
       },
+      gameLabels: {
+        snake: '🐍 ULAR',
+        tictactoe: '⭕ TIC TAC TOE',
+        gameOver: '💀 GAME OVER',
+        score: 'Skor',
+        highScore: 'Skor Tertinggi',
+        restart: '🔄 ULANG',
+        yourTurn: 'Giliran Kamu',
+        computerTurn: 'Giliran Komputer',
+        youWin: '🎉 KAMU MENANG!',
+        youLose: '😢 KAMU KALAH',
+        draw: '🤝 SERI',
+      },
+      countdownLabels: {
+        heading: '⏳ HITUNG MUNDUR',
+        eventName: 'Nama Acara',
+        eventDate: 'Tanggal Acara',
+        days: 'HARI',
+        hours: 'JAM',
+        minutes: 'MENIT',
+        seconds: 'DETIK',
+        eventPassed: 'Acara sudah lewat!',
+        setEvent: 'ATUR ACARA',
+        save: 'SIMPAN',
+        cancel: 'BATAL',
+      },
+      quoteLabels: {
+        heading: '💭 KUTIPAN',
+        refresh: 'KUTIPAN BARU',
+        loading: 'Memuat...',
+        category: {
+          motivation: 'MOTIVASI',
+          psychology: 'PSIKOLOGI',
+          mentalhealth: 'KESEHATAN MENTAL',
+        },
+      },
       showcase: 'Showcase',
       showcaseTabs: { projects: '💼 PROYEK', blog: '📝 BLOG', gallery: '🖼️ GALERI' },
       experience: 'Pengalaman',
@@ -127,6 +204,9 @@ export default function Home() {
       search: '🔍 搜索...',
       aboutTitle: '关于我',
       linksTitle: '链接',
+      photobooth: '照相亭',
+      showcaseBtn: '🎨 作品集',
+      experienceBtn: '💼 经历',
       guestbookTitle: '留言簿',
       guestbook1: '分享你的想法!',
       guestbook2: '欢迎匿名留言 ✨',
@@ -144,7 +224,7 @@ export default function Home() {
         errorFetch: '获取天气失败',
       },
       funZone: '趣味区',
-      funTabs: { pomodoro: '⏱️ 番茄钟', visitor: '👥 访客数', pixelart: '🎨 像素画' },
+      funTabs: { pomodoro: '⏱️ 番茄钟', visitor: '👥 访客数', pixelart: '🎨 像素画', game: '🎮 游戏' },
       pomodoroLabels: {
         workTab: '🎯 专注',
         breakTab: '☕ 休息',
@@ -161,6 +241,42 @@ export default function Home() {
       },
       pixelArtLabels: {
         clear: '🗑️ 清空画布',
+      },
+      gameLabels: {
+        snake: '🐍 贪吃蛇',
+        tictactoe: '⭕ 井字棋',
+        gameOver: '💀 游戏结束',
+        score: '分数',
+        highScore: '最高分',
+        restart: '🔄 重新开始',
+        yourTurn: '你的回合',
+        computerTurn: '电脑回合',
+        youWin: '🎉 你赢了!',
+        youLose: '😢 你输了',
+        draw: '🤝 平局',
+      },
+      countdownLabels: {
+        heading: '⏳ 倒计时',
+        eventName: '活动名称',
+        eventDate: '活动日期',
+        days: '天',
+        hours: '时',
+        minutes: '分',
+        seconds: '秒',
+        eventPassed: '活动已过!',
+        setEvent: '设置活动',
+        save: '保存',
+        cancel: '取消',
+      },
+      quoteLabels: {
+        heading: '💭 语录',
+        refresh: '换一句',
+        loading: '加载中...',
+        category: {
+          motivation: '励志',
+          psychology: '心理学',
+          mentalhealth: '心理健康',
+        },
       },
       showcase: '作品集',
       showcaseTabs: { projects: '💼 项目', blog: '📝 博客', gallery: '🖼️ 画廊' },
@@ -216,6 +332,9 @@ export default function Home() {
               />
             </div>
 
+            {/* Audio Toggle */}
+            <AudioToggle />
+
             {/* Dark Mode Toggle */}
             <button
               onClick={() => setDarkMode(!darkMode)}
@@ -268,7 +387,7 @@ export default function Home() {
               <p className="text-xs sm:text-sm leading-relaxed text-retro-text">
                 ✨ {t.about}
               </p>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2 mb-4">
                 <span className="px-2 sm:px-3 py-1 bg-pastel-mint border-2 border-retro-border text-[10px] sm:text-xs font-press">
                   PHYSICS
                 </span>
@@ -281,6 +400,20 @@ export default function Home() {
                 <span className="px-2 sm:px-3 py-1 bg-pastel-blue border-2 border-retro-border text-[10px] sm:text-xs font-press">
                   CHINESE 中文
                 </span>
+              </div>
+              
+              {/* Showcase & Experience Buttons */}
+              <div className="flex gap-3 pt-12 mt-10">
+                <Link href="/showcase" className="flex-1">
+                  <button className="w-full px-4 py-2 bg-pastel-pink border-2 border-black font-bold text-[10px] sm:text-xs hover:bg-opacity-80 transition-all">
+                    {t.showcaseBtn}
+                  </button>
+                </Link>
+                <Link href="/experience" className="flex-1">
+                  <button className="w-full px-4 py-2 bg-pastel-mint border-2 border-black font-bold text-[10px] sm:text-xs hover:bg-opacity-80 transition-all">
+                    {t.experienceBtn}
+                  </button>
+                </Link>
               </div>
             </div>
           </RetroCard>
@@ -300,10 +433,18 @@ export default function Home() {
             </div>
           </RetroCard>
 
+          {/* Weather Widget */}
+          <RetroCard 
+            title={t.weather}
+            className="bg-pastel-mint border-4 border-pastel-yellow hover:shadow-xl transition-all duration-300"
+          >
+            <WeatherWidget labels={t.weatherLabels} />
+          </RetroCard>
+
           {/* PhotoBooth */}
           <Link href="/photobooth">
             <RetroCard 
-              title="PHOTOBOOTH"
+              title={t.photobooth}
               clickable
               className="bg-pastel-yellow border-4 border-[#d6336c] hover:border-pastel-blue hover:shadow-xl transition-all duration-300 transform hover:scale-105"
             >
@@ -350,20 +491,12 @@ export default function Home() {
             </Link>
           )}
 
-          {/* Spotify Widget */}
-          <RetroCard title={t.nowPlaying} className="lg:col-span-2">
-            <SpotifyEmbed
-              src="https://open.spotify.com/embed/playlist/3IDNsoyqeq1nejHYCI2tjZ?utm_source=generator"
-              responsive
-              mobileHeight={200}
-              desktopHeight={352}
-              title="zhuoyaazh playlist"
-            />
-          </RetroCard>
-
-          {/* Weather Widget */}
-          <RetroCard title={t.weather}>
-            <WeatherWidget labels={t.weatherLabels} />
+          {/* Countdown Timer */}
+          <RetroCard 
+            title={t.countdownLabels.heading}
+            className="bg-pastel-blue border-4 border-pastel-mint hover:shadow-xl transition-all duration-300"
+          >
+            <CountdownTimer labels={t.countdownLabels} />
           </RetroCard>
 
           {/* Fun Zone */}
@@ -373,43 +506,26 @@ export default function Home() {
             pomodoroLabels={t.pomodoroLabels}
             visitorLabels={t.visitorLabels}
             pixelArtLabels={t.pixelArtLabels}
+            gameLabels={t.gameLabels}
           />
 
-          {/* Showcase */}
-          <Showcase labels={t.showcaseTabs} title={t.showcase} searchQuery={searchQuery} />
+          {/* Random Quote Generator */}
+          <RetroCard 
+            title={t.quoteLabels.heading}
+            className="bg-pastel-pink border-4 border-pastel-yellow hover:shadow-xl transition-all duration-300"
+          >
+            <RandomQuoteGenerator labels={t.quoteLabels} />
+          </RetroCard>
 
-          {/* Portfolio Section */}
-          <RetroCard title={t.experience} className="lg:col-span-3">
-            {/* Tabs */}
-            <div className="flex gap-2 mb-6 border-b-2 border-retro-border/30">
-              <button
-                onClick={() => setActiveTab('org')}
-                className={`px-4 py-2 font-press text-xs transition-colors border-b-2 ${
-                  activeTab === 'org'
-                    ? 'border-b-pastel-yellow text-pastel-yellow'
-                    : 'border-b-transparent text-retro-text/50 hover:text-retro-text'
-                }`}
-              >
-                {t.org}
-              </button>
-              <button
-                onClick={() => setActiveTab('committee')}
-                className={`px-4 py-2 font-press text-[10px] sm:text-xs transition-colors border-b-2 wrap-break-word ${
-                  activeTab === 'committee'
-                    ? 'border-b-pastel-yellow text-pastel-yellow'
-                    : 'border-b-transparent text-retro-text/50 hover:text-retro-text'
-                }`}
-              >
-                {t.committee}
-              </button>
-            </div>
-
-            {/* Content */}
-            {activeTab === 'org' ? (
-              <PortfolioSection data={ORGANIZATIONS} />
-            ) : (
-              <PortfolioSection data={COMMITTEES} isCommittee />
-            )}
+          {/* Spotify Widget */}
+          <RetroCard title={t.nowPlaying} className="lg:col-span-2">
+            <SpotifyEmbed
+              src="https://open.spotify.com/embed/playlist/3IDNsoyqeq1nejHYCI2tjZ?utm_source=generator"
+              responsive
+              mobileHeight={200}
+              desktopHeight={352}
+              title="zhuoyaazh playlist"
+            />
           </RetroCard>
 
         </div>

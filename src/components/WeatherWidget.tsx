@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import RetroCard from './RetroCard';
 
 type WeatherLabels = {
   heading: string;
@@ -120,69 +119,103 @@ export default function WeatherWidget({ labels }: WeatherWidgetProps) {
   };
 
   return (
-    <RetroCard className="flex flex-col gap-3 sm:gap-4">
-      <h2 className="text-[10px] sm:text-xs font-bold text-pastel-purple">
-        {ui.heading}
-      </h2>
+    <div className="flex flex-col items-center justify-center text-center">
+      <div className="w-full px-6 py-5 sm:px-8 sm:py-6 bg-pastel-yellow rounded-lg space-y-3">
+        {/* Weather Icon/Emoji - Large Display */}
+        {weather && !error && (
+          <div className="text-4xl sm:text-5xl animate-bounce">
+            {getWeatherEmoji(weather.weather[0].main)}
+          </div>
+        )}
+        
+        {loading && !weather && (
+          <div className="text-4xl sm:text-5xl animate-pulse">⏳</div>
+        )}
+        
+        {error && (
+          <div className="text-4xl sm:text-5xl">❌</div>
+        )}
 
-      {/* Buttons */}
-      <div className="flex gap-2 flex-wrap">
-        <button
-          onClick={getWeatherByLocation}
-          disabled={loading}
-          className="text-[8px] sm:text-[9px] px-2 py-1 sm:px-3 sm:py-1.5 bg-pastel-blue text-black border-2 border-black font-bold hover:bg-opacity-80 disabled:opacity-50 transition-all"
-        >
-          {loading ? '...' : ui.auto}
-        </button>
-        <form onSubmit={handleSearch} className="flex gap-2 flex-1">
-          <input
-            type="text"
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-            placeholder={ui.placeholder}
-            className="text-[8px] sm:text-[9px] px-2 py-1 sm:px-3 sm:py-1.5 border-2 border-black flex-1 font-bold placeholder-gray-500"
-          />
+        {/* Temperature Display */}
+        {weather && !error && (
+          <>
+            <p className="text-[10px] sm:text-xs font-bold text-retro-border uppercase tracking-wide">
+              {weather.name}
+            </p>
+            <p className="text-2xl sm:text-3xl font-bold text-retro-border">
+              {weather.main.temp.toFixed(1)}°C
+            </p>
+            <p className="text-[8px] sm:text-[9px] text-retro-border font-bold capitalize">
+              {weather.weather[0].description}
+            </p>
+            <div className="flex gap-3 justify-center text-[8px] sm:text-[9px] font-bold text-retro-border">
+              <span>💧 {weather.main.humidity}%</span>
+              <span>💨 {weather.wind.speed.toFixed(1)} km/h</span>
+            </div>
+          </>
+        )}
+
+        {error && (
+          <p className="text-[9px] sm:text-[10px] text-red-600 font-bold">
+            {error}
+          </p>
+        )}
+
+        {loading && !weather && (
+          <p className="text-[9px] sm:text-[10px] text-retro-border font-bold">
+            {ui.loading}
+          </p>
+        )}
+
+        {/* Search Controls - Compact */}
+        <div className="flex gap-2 flex-wrap justify-center pt-2">
           <button
-            type="submit"
-            disabled={loading || !searchInput.trim()}
-            className="text-[8px] sm:text-[9px] px-2 py-1 sm:px-3 sm:py-1.5 bg-pastel-yellow text-black border-2 border-black font-bold hover:bg-opacity-80 disabled:opacity-50 transition-all"
+            onClick={getWeatherByLocation}
+            disabled={loading}
+            className="text-[8px] px-2 py-1 bg-pastel-blue text-black border-2 border-black font-bold hover:bg-opacity-80 disabled:opacity-50 transition-all"
           >
-            {loading ? '...' : '🔍'}
+            📍 {ui.auto}
           </button>
-        </form>
+          <form onSubmit={handleSearch} className="flex gap-1">
+            <input
+              type="text"
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              placeholder={ui.placeholder}
+              className="text-[8px] px-2 py-1 border-2 border-black w-20 font-bold placeholder-gray-500"
+            />
+            <button
+              type="submit"
+              disabled={loading || !searchInput.trim()}
+              className="text-[8px] px-2 py-1 bg-white text-black border-2 border-black font-bold hover:bg-opacity-80 disabled:opacity-50 transition-all"
+            >
+              🔍
+            </button>
+          </form>
+        </div>
       </div>
-
-      {/* Weather Display */}
-      {error && (
-        <div className="text-[8px] sm:text-[9px] text-red-500 font-bold">
-          ✗ {error}
-        </div>
-      )}
-
-      {weather && !error && (
-        <div className="space-y-2">
-          <div className="text-[9px] sm:text-xs font-bold text-pastel-purple">
-            {weather.name}
-          </div>
-          <div className="text-lg sm:text-2xl">
-            {weather.weather[0].icon}
-          </div>
-          <div className="text-[9px] sm:text-xs font-bold">
-            <div>{weather.main.temp.toFixed(1)}°C</div>
-            <div className="text-pastel-blue">{weather.weather[0].description}</div>
-          </div>
-          <div className="text-[8px] sm:text-[9px] text-gray-600 font-bold space-y-1">
-            <div>💧 {ui.humidity}: {weather.main.humidity}%</div>
-            <div>💨 {ui.wind}: {weather.wind.speed.toFixed(1)} km/h</div>
-          </div>
-        </div>
-      )}
-
-      {loading && !weather && (
-        <div className="text-[8px] sm:text-[9px] text-gray-600 font-bold">
-          {ui.loading}
-        </div>
-      )}
-    </RetroCard>
+    </div>
   );
+}
+
+// Helper function to get weather emoji based on condition
+function getWeatherEmoji(condition: string): string {
+  const emojis: { [key: string]: string } = {
+    Clear: '☀️',
+    Clouds: '☁️',
+    Rain: '🌧️',
+    Drizzle: '🌦️',
+    Thunderstorm: '⛈️',
+    Snow: '❄️',
+    Mist: '🌫️',
+    Smoke: '🌫️',
+    Haze: '🌫️',
+    Dust: '🌫️',
+    Fog: '🌫️',
+    Sand: '🌫️',
+    Ash: '🌫️',
+    Squall: '💨',
+    Tornado: '🌪️',
+  };
+  return emojis[condition] || '🌤️';
 }

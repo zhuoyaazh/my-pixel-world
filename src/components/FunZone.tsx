@@ -5,8 +5,9 @@ import RetroCard from './RetroCard';
 import PomodoroTimer from './PomodoroTimer';
 import VisitorCounter from './VisitorCounter';
 import PixelArtCanvas from './PixelArtCanvas';
+import MiniGame from './MiniGame';
 
-type FunTab = 'pomodoro' | 'visitor' | 'pixelart';
+type FunTab = 'pomodoro' | 'visitor' | 'pixelart' | 'game';
 
 type FunZoneProps = {
   title?: string;
@@ -14,18 +15,21 @@ type FunZoneProps = {
     pomodoro: string;
     visitor: string;
     pixelart: string;
+    game: string;
   };
   pomodoroLabels?: Parameters<typeof PomodoroTimer>[0]['labels'];
   visitorLabels?: Parameters<typeof VisitorCounter>[0]['labels'];
   pixelArtLabels?: Parameters<typeof PixelArtCanvas>[0]['labels'];
+  gameLabels?: Parameters<typeof MiniGame>[0]['labels'];
 };
 
-export default function FunZone({ title = 'Fun Zone', labels, pomodoroLabels, visitorLabels, pixelArtLabels }: FunZoneProps) {
+export default function FunZone({ title = 'Fun Zone', labels, pomodoroLabels, visitorLabels, pixelArtLabels, gameLabels }: FunZoneProps) {
   const [activeTab, setActiveTab] = useState<FunTab>('pomodoro');
   const tabLabels = labels ?? {
     pomodoro: '⏱️ POMODORO',
     visitor: '👥 VISITORS',
     pixelart: '🎨 PIXEL ART',
+    game: '🎮 GAMES',
   };
 
   return (
@@ -62,6 +66,16 @@ export default function FunZone({ title = 'Fun Zone', labels, pomodoroLabels, vi
         >
           {tabLabels.pixelart}
         </button>
+        <button
+          onClick={() => setActiveTab('game')}
+          className={`px-3 py-2 font-press text-[8px] sm:text-xs transition-colors border-b-2 whitespace-nowrap ${
+            activeTab === 'game'
+              ? 'border-b-pastel-yellow text-pastel-yellow'
+              : 'border-b-transparent text-retro-text/50 hover:text-retro-text'
+          }`}
+        >
+          {tabLabels.game}
+        </button>
       </div>
 
       {/* Content */}
@@ -69,6 +83,7 @@ export default function FunZone({ title = 'Fun Zone', labels, pomodoroLabels, vi
         {activeTab === 'pomodoro' && <PomodoroTimer labels={pomodoroLabels} />}
         {activeTab === 'visitor' && <VisitorCounter labels={visitorLabels} />}
         {activeTab === 'pixelart' && <PixelArtCanvas labels={pixelArtLabels} />}
+        {activeTab === 'game' && gameLabels && <MiniGame labels={gameLabels} />}
       </div>
     </RetroCard>
   );

@@ -503,7 +503,7 @@ export default function PhotoboothWidget() {
     alert('Sticker disimpan! Klik di strip untuk menaruhnya. ✨');
   };
 
-  const useSavedSticker = (saved: Sticker) => {
+  const placeSavedSticker = (saved: Sticker) => {
     setPlacingSticker(saved.grid);
     alert('Klik di strip untuk menaruh sticker! ✨');
   };
@@ -558,7 +558,6 @@ export default function PhotoboothWidget() {
                 const previewWidth = 260;
                 const previewHeight = Math.round((totalH / totalW) * previewWidth);
                 const scale = previewWidth / totalW;
-                const textMargin = 76;
                 return (
                   <div 
                     onClick={handleStripClick}
@@ -744,7 +743,7 @@ export default function PhotoboothWidget() {
                         {savedStickers.map((saved, idx) => (
                           <div key={saved.id} className="flex gap-2 items-center">
                             <button
-                              onClick={() => useSavedSticker(saved)}
+                              onClick={() => placeSavedSticker(saved)}
                               className="flex-1 text-[8px] p-2 bg-white border-2 border-black font-bold hover:bg-pastel-yellow transition-all"
                             >
                               #{idx + 1} USE
